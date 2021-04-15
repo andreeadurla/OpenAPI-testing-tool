@@ -2,7 +2,9 @@ package controller;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import parser.SchemaParser;
 import validator.FileValidator;
+import validator.UrlValidator;
 import view.CheckerView;
 import view.fileChooser.FileChooserEnum;
 import view.fileChooser.IJsonFileChooser;
@@ -33,7 +35,7 @@ public class CheckerController {
 
     private void insertRequiredData() {
         insertPorts();
-        insertOperations();
+        //insertOperations();
     }
 
     /**
@@ -52,13 +54,10 @@ public class CheckerController {
      * Insert required data in OperationsCombobox
      */
     private void insertOperations() {
-        List<String> operations = new ArrayList<>();
-        //initial values
-        operations.add("getRealTime");
-        operations.add("getTime");
-        operations.add("getTimeAsString");
 
-        operations.forEach(o -> view.insertInOperationsComboBox(o));
+        List<String> operations = SchemaParser.getOperations("file:/C:/Users/Andreea/Desktop/OpenAPI/swagger-petstore.json");
+
+        operations.forEach(op -> view.insertInOperationsComboBox(op));
     }
 
     /**
@@ -66,6 +65,7 @@ public class CheckerController {
      */
     private void addActionListeners() {
         view.addBrowseURLButtonListener(e -> chooseInputFile());
+        view.addConfirmURLButtonListener(e -> confirmAndFindOperations());
         view.addBrowseOutputButtonListener(e -> chooseOutputFile());
 
         view.addSendButtonListener(e -> sendData());
@@ -79,8 +79,30 @@ public class CheckerController {
         IJsonFileChooser fileChooser = JsonFileFactory.getFileChooser(FileChooserEnum.OPEN);
         String filePath = fileChooser.getAbsolutePathOfSelectedFile();
 
-        if(StringUtils.isNotEmpty(filePath))
+        if (StringUtils.isNotEmpty(filePath))
             view.setInputUrlField(filePath);
+    }
+
+    /**
+     * Validates the input URL and parse this to get the name of performed operations.
+     * Operations are inserted OperationsCombobox.
+     */
+    private void confirmAndFindOperations() {
+        String inputUrl = view.getInputUrl();
+
+        if(UrlValidator.isNotValid(inputUrl)) {
+
+            JOptionPane.showMessageDialog(view, "Invalid data",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+
+            return ;
+        }
+
+        view.clearOperationsComboBox();
+
+        List<String> operations = SchemaParser.getOperations(inputUrl);
+
+        operations.forEach(op -> view.insertInOperationsComboBox(op));
     }
 
     /**
@@ -95,23 +117,24 @@ public class CheckerController {
     }
 
     /**
-     * Validates the input Url and the path of output file and send data.
+     * Validates the path of output file and send data.
      */
     private void sendData() {
-        //String inputUrl = view.getInputUrl();
-
         String outputFile = view.getOutputFile();
+
         if(BooleanUtils.isTrue(FileValidator.isFilePath(outputFile))) {
 
             JOptionPane.showMessageDialog(view, "Data was sent successfully",
                     "Success", JOptionPane.INFORMATION_MESSAGE);
 
             view.closeDialog();
+
+            return ;
         }
-        else {
-            JOptionPane.showMessageDialog(view, "Invalid data",
+
+        JOptionPane.showMessageDialog(view, "Invalid output file",
                     "Error", JOptionPane.ERROR_MESSAGE);
-        }
+
     }
 
     /**

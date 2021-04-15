@@ -14,6 +14,7 @@ public class CheckerView extends JDialog {
     //InputURL
     private JTextField inputUrlField = new JTextField();
     private JButton browseURLButton = new JButton("\uD83D\uDCC1");
+    private JButton confirmURLButton = new JButton(	"\u2713");
 
     //OutputURL
     private JTextField outputFileField = new JTextField();
@@ -48,7 +49,7 @@ public class CheckerView extends JDialog {
 
         //Style JDialog
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setPreferredSize(new Dimension(650, 600));
+        this.setPreferredSize(new Dimension(680, 600));
         this.setLocationRelativeTo(frame);
 
         //Create Form
@@ -136,6 +137,7 @@ public class CheckerView extends JDialog {
         form.add(inputUrlField);
 
         form.add(browseURLButton);
+        form.add(confirmURLButton);
 
         return form;
     }
@@ -202,6 +204,13 @@ public class CheckerView extends JDialog {
         return form;
     }
 
+    /**
+     * Removes all items from the operations ComboBox
+     */
+    public void clearOperationsComboBox() {
+        operationsComboBox.removeAllItems();
+    }
+
     public String getInputUrl() {
         return inputUrlField.getText();
     }
@@ -232,6 +241,10 @@ public class CheckerView extends JDialog {
 
     public void addBrowseURLButtonListener(ActionListener e) {
         browseURLButton.addActionListener(e);
+    }
+
+    public void addConfirmURLButtonListener(ActionListener e) {
+        confirmURLButton.addActionListener(e);
     }
 
     public void addBrowseOutputButtonListener(ActionListener e) {

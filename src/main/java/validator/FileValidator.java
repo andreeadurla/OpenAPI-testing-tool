@@ -13,8 +13,8 @@ public class FileValidator {
 
     /**
      * Checks if filePath is a valid file path
-     * @param filePath
-     * @return true if the filePath is a valid path
+     * @param filePath  the file path validation is being performed on
+     * @return true if the filePath is valid
      */
     public static boolean isFilePath(String filePath) {
 

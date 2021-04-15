@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
-import java.io.IOException;
+import java.net.URL;
 
 /**
  * Creates a JFileChooser in OPEN mode used to select only JSON files.
@@ -30,16 +30,16 @@ public class JsonFileOpen extends JFileChooser implements IJsonFileChooser {
 
     /**
      * Returns the path of selected file.
-     * @return Absolute path of selected file or an empty string if nothing is selected.
+     * @return URL of selected file or an empty string if nothing is selected.
      */
     public String getAbsolutePathOfSelectedFile() {
 
         if(returnState == JFileChooser.APPROVE_OPTION) {
             File selectedFile = this.getSelectedFile();
-
             try {
-                return selectedFile.getCanonicalPath();
-            } catch (IOException e) {
+                URL fileURL = selectedFile.toURI().toURL();
+                return fileURL.toString();
+            } catch (Exception e) {
                 return StringUtils.EMPTY;
             }
         }
